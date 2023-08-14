@@ -7,6 +7,7 @@ import { Toaster } from "react-hot-toast";
 import Footer from "@/components/Footer";
 import ThemeSwitch from "@/components/ThemeSwitch";
 import ThemeContextProvider from "@/context/ThemeContextProvider";
+import { Analytics } from "@vercel/analytics/react";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -35,6 +36,7 @@ export default function RootLayout({
           <ActiveSectionContextProvider>
             <Header />
             {children}
+            <Analytics />
             <Footer />
             <Toaster position="top-right" />
             <ThemeSwitch />
