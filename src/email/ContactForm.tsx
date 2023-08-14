@@ -31,7 +31,7 @@ export default function ContactForm({ message, email }: ContactFormProps) {
               </Heading>
               <Text>{message}</Text>
               <Hr />
-              <Text>The sender&apos;s email is: {email}</Text>
+              <Text>The sender&apos;s email is: {email} </Text>
             </Section>
           </Container>
         </Body>
