@@ -4,7 +4,11 @@ import turkey from '@/data/turkey.json'
 export const dynamic = 'force-static'
 
 export async function POST(req: NextRequest) {
-    const {province, district, town} = await req.json()
+    const {province, district, town, list} = await req.json()
+
+    if (list) {
+        return new Response(JSON.stringify(turkey), {headers: {'Content-Type': 'application/json'}})
+    }
 
     if (!province && !district && !town) {
         return new Response(JSON.stringify({error: 'At least one of province, district or town is required'}), {
