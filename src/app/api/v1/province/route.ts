@@ -7,13 +7,19 @@ export async function POST(req: NextRequest) {
     const {province, district, town} = await req.json()
 
     if (!province && !district && !town) {
-        return new Response.json({error: 'At least one of province, district or town is required'}, {status: 400})
+        return new Response(JSON.stringify({error: 'At least one of province, district or town is required'}), {
+            status: 400,
+            headers: {'Content-Type': 'application/json'}
+        })
     }
 
     const provinceData = province ? turkey.find((item) => item.province.toLowerCase() === province.toLowerCase()) : null
 
     if (province && !provinceData) {
-        return new Response.json({error: 'Province not found'}, {status: 404})
+        return new Response(JSON.stringify({error: 'Province not found'}), {
+            status: 404,
+            headers: {'Content-Type': 'application/json'}
+        })
     }
 
     let districtData = null
@@ -29,7 +35,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (district && !districtData) {
-        return new Response.json({error: 'District not found'}, {status: 404})
+        return new Response(JSON.stringify({error: 'District not found'}), {
+            status: 404,
+            headers: {'Content-Type': 'application/json'}
+        })
     }
 
     let townData = null
@@ -48,14 +57,17 @@ export async function POST(req: NextRequest) {
     }
 
     if (town && !townData) {
-        return new Response.json({error: 'Town not found'}, {status: 404})
+        return new Response(JSON.stringify({error: 'Town not found'}), {
+            status: 404,
+            headers: {'Content-Type': 'application/json'}
+        })
     }
 
     if (townData) {
-        return new Response.json(townData)
+        return new Response(JSON.stringify(townData), {headers: {'Content-Type': 'application/json'}})
     } else if (districtData) {
-        return new Response.json(districtData)
+        return new Response(JSON.stringify(districtData), {headers: {'Content-Type': 'application/json'}})
     } else if (provinceData) {
-        return new Response.json(provinceData)
+        return new Response(JSON.stringify(provinceData), {headers: {'Content-Type': 'application/json'}})
     }
 }
