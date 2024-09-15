@@ -1,29 +1,49 @@
 import {type NextRequest} from 'next/server'
 import turkey from '@/data/turkey.json'
 
-export const dynamic = 'force-static'
+function setCorsHeaders(response, req) {
+    const allowedOrigins = ['https://flower.weblimes.com', 'https://flower2.weblimes.com'];
+    const requestOrigin = req.headers.get('Origin');
+    if (allowedOrigins.includes(requestOrigin)) {
+        response.headers.set('Access-Control-Allow-Origin', requestOrigin)
+    }
+
+    response.headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    response.headers.set('Access-Control-Allow-Credentials', 'true')
+    return response
+}
+
+export async function OPTIONS() {
+    const response = new NextResponse(null, {status: 204})
+    const req = new NextRequest()
+    return setCorsHeaders(response, req)
+}
 
 export async function POST(req: NextRequest) {
     const {province, district, town, list} = await req.json()
 
     if (list) {
-        return new Response(JSON.stringify(turkey), {headers: {'Content-Type': 'application/json'}})
+        const res = new Response(JSON.stringify(turkey), {headers: {'Content-Type': 'application/json'}})
+        return setCorsHeaders(res, req)
     }
 
     if (!province && !district && !town) {
-        return new Response(JSON.stringify({error: 'At least one of province, district or town is required'}), {
+        const res = new Response(JSON.stringify({error: 'At least one of province, district or town is required'}), {
             status: 400,
             headers: {'Content-Type': 'application/json'}
         })
+        return setCorsHeaders(res, req)
     }
 
     const provinceData = province ? turkey.find((item) => item.province.toLowerCase() === province.toLowerCase()) : null
 
     if (province && !provinceData) {
-        return new Response(JSON.stringify({error: 'Province not found'}), {
+        const res = new Response(JSON.stringify({error: 'Province not found'}), {
             status: 404,
             headers: {'Content-Type': 'application/json'}
         })
+        return setCorsHeaders(res, req)
     }
 
     let districtData = null
@@ -39,10 +59,11 @@ export async function POST(req: NextRequest) {
     }
 
     if (district && !districtData) {
-        return new Response(JSON.stringify({error: 'District not found'}), {
+        const res = new Response(JSON.stringify({error: 'District not found'}), {
             status: 404,
             headers: {'Content-Type': 'application/json'}
         })
+        return setCorsHeaders(res, req)
     }
 
     let townData = null
@@ -61,17 +82,21 @@ export async function POST(req: NextRequest) {
     }
 
     if (town && !townData) {
-        return new Response(JSON.stringify({error: 'Town not found'}), {
+        const res = new Response(JSON.stringify({error: 'Town not found'}), {
             status: 404,
             headers: {'Content-Type': 'application/json'}
         })
+        return setCorsHeaders(res, req)
     }
 
     if (townData) {
-        return new Response(JSON.stringify(townData), {headers: {'Content-Type': 'application/json'}})
+        const res = new Response(JSON.stringify(townData), {headers: {'Content-Type': 'application/json'}})
+        return setCorsHeaders(res, req)
     } else if (districtData) {
-        return new Response(JSON.stringify(districtData), {headers: {'Content-Type': 'application/json'}})
+        const res = new Response(JSON.stringify(districtData), {headers: {'Content-Type': 'application/json'}})
+        return setCorsHeaders(res, req)
     } else if (provinceData) {
-        return new Response(JSON.stringify(provinceData), {headers: {'Content-Type': 'application/json'}})
+        const res = new Response(JSON.stringify(provinceData), {headers: {'Content-Type': 'application/json'}})
+        return setCorsHeaders(res, req)
     }
 }
