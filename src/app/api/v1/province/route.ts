@@ -1,49 +1,33 @@
-import {NextRequest, NextResponse} from 'next/server'
+import {NextRequest} from 'next/server'
 import turkey from '@/data/turkey.json'
 
-function setCorsHeaders(response: NextResponse, req: NextRequest) {
-    const allowedOrigins = ['https://flower.weblimes.com', 'https://flower2.weblimes.com'];
-    const requestOrigin = req.headers.get('Origin');
-
-    if (allowedOrigins.includes(requestOrigin || '')) {
-        response.headers.set('Access-Control-Allow-Origin', requestOrigin!)
-    }
-
-    response.headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
-    response.headers.set('Access-Control-Allow-Credentials', 'true')
-    return response
-}
-
-export async function OPTIONS(req: NextRequest) {
-    const response = new NextResponse(null, {status: 204});
-    return setCorsHeaders(response, req);
+export async function OPTIONS(request: NextRequest) {
+    return new NextResponse('', {
+        status: 200
+    })
 }
 
 export async function POST(req: NextRequest) {
     const {province, district, town, list} = await req.json()
 
     if (list) {
-        const res = new NextResponse(JSON.stringify(turkey), {headers: {'Content-Type': 'application/json'}})
-        return setCorsHeaders(res, req)
+        return new Response(JSON.stringify(turkey), {headers: {'Content-Type': 'application/json'}})
     }
 
     if (!province && !district && !town) {
-        const res = new NextResponse(JSON.stringify({error: 'At least one of province, district or town is required'}), {
+        return new Response(JSON.stringify({error: 'At least one of province, district or town is required'}), {
             status: 400,
             headers: {'Content-Type': 'application/json'}
         })
-        return setCorsHeaders(res, req)
     }
 
     const provinceData = province ? turkey.find((item) => item.province.toLowerCase() === province.toLowerCase()) : null
 
     if (province && !provinceData) {
-        const res = new NextResponse(JSON.stringify({error: 'Province not found'}), {
+        return new Response(JSON.stringify({error: 'Province not found'}), {
             status: 404,
             headers: {'Content-Type': 'application/json'}
         })
-        return setCorsHeaders(res, req)
     }
 
     let districtData = null
@@ -59,11 +43,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (district && !districtData) {
-        const res = new NextResponse(JSON.stringify({error: 'District not found'}), {
+        return new Response(JSON.stringify({error: 'District not found'}), {
             status: 404,
             headers: {'Content-Type': 'application/json'}
         })
-        return setCorsHeaders(res, req)
     }
 
     let townData = null
@@ -82,21 +65,17 @@ export async function POST(req: NextRequest) {
     }
 
     if (town && !townData) {
-        const res = new NextResponse(JSON.stringify({error: 'Town not found'}), {
+        return new Response(JSON.stringify({error: 'Town not found'}), {
             status: 404,
             headers: {'Content-Type': 'application/json'}
         })
-        return setCorsHeaders(res, req)
     }
 
     if (townData) {
-        const res = new NextResponse(JSON.stringify(townData), {headers: {'Content-Type': 'application/json'}})
-        return setCorsHeaders(res, req)
+        return new Response(JSON.stringify(townData), {headers: {'Content-Type': 'application/json'}})
     } else if (districtData) {
-        const res = new NextResponse(JSON.stringify(districtData), {headers: {'Content-Type': 'application/json'}})
-        return setCorsHeaders(res, req)
+        return new Response(JSON.stringify(districtData), {headers: {'Content-Type': 'application/json'}})
     } else if (provinceData) {
-        const res = new NextResponse(JSON.stringify(provinceData), {headers: {'Content-Type': 'application/json'}})
-        return setCorsHeaders(res, req)
+        return new Response(JSON.stringify(provinceData), {headers: {'Content-Type': 'application/json'}})
     }
 }
