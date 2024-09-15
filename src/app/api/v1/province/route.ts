@@ -1,4 +1,4 @@
-import {NextRequest} from 'next/server'
+import {NextRequest, NextResponse} from 'next/server'
 import turkey from '@/data/turkey.json'
 
 export async function OPTIONS(request: NextRequest) {
