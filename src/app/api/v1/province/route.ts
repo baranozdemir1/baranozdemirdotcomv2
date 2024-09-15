@@ -7,13 +7,13 @@ export async function POST(req: NextRequest) {
     const {province, district, town} = await req.json()
 
     if (!province && !district && !town) {
-        return Response.json({error: 'At least one of province, district or town is required'}, {status: 400})
+        return new Response.json({error: 'At least one of province, district or town is required'}, {status: 400})
     }
 
     const provinceData = province ? turkey.find((item) => item.province.toLowerCase() === province.toLowerCase()) : null
 
     if (province && !provinceData) {
-        return Response.json({error: 'Province not found'}, {status: 404})
+        return new Response.json({error: 'Province not found'}, {status: 404})
     }
 
     let districtData = null
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (district && !districtData) {
-        return Response.json({error: 'District not found'}, {status: 404})
+        return new Response.json({error: 'District not found'}, {status: 404})
     }
 
     let townData = null
@@ -48,14 +48,14 @@ export async function POST(req: NextRequest) {
     }
 
     if (town && !townData) {
-        return Response.json({error: 'Town not found'}, {status: 404})
+        return new Response.json({error: 'Town not found'}, {status: 404})
     }
 
     if (townData) {
-        return Response.json(townData)
+        return new Response.json(townData)
     } else if (districtData) {
-        return Response.json(districtData)
+        return new Response.json(districtData)
     } else if (provinceData) {
-        return Response.json(provinceData)
+        return new Response.json(provinceData)
     }
 }
