@@ -2,22 +2,32 @@ import {NextRequest, NextResponse} from 'next/server'
 import turkey from '@/data/turkey.json'
 
 export async function OPTIONS(request: NextRequest) {
-    return new NextResponse('', {
-        status: 200
-    })
+    return new NextResponse(null, {
+        status: 204,
+        headers: {
+            'Access-Control-Allow-Origin': '*',  // Change '*' to your specific domain if needed
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type',
+        },
+    });
 }
 
 export async function POST(req: NextRequest) {
     const {province, district, town, list} = await req.json()
 
+    const responseHeaders = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',  // Change '*' to your specific domain if needed
+    };
+
     if (list) {
-        return new Response(JSON.stringify(turkey), {headers: {'Content-Type': 'application/json'}})
+        return new Response(JSON.stringify(turkey), {headers: responseHeaders})
     }
 
     if (!province && !district && !town) {
         return new Response(JSON.stringify({error: 'At least one of province, district or town is required'}), {
             status: 400,
-            headers: {'Content-Type': 'application/json'}
+            headers: responseHeaders
         })
     }
 
@@ -26,7 +36,7 @@ export async function POST(req: NextRequest) {
     if (province && !provinceData) {
         return new Response(JSON.stringify({error: 'Province not found'}), {
             status: 404,
-            headers: {'Content-Type': 'application/json'}
+            headers: responseHeaders
         })
     }
 
@@ -45,7 +55,7 @@ export async function POST(req: NextRequest) {
     if (district && !districtData) {
         return new Response(JSON.stringify({error: 'District not found'}), {
             status: 404,
-            headers: {'Content-Type': 'application/json'}
+            headers: responseHeaders
         })
     }
 
@@ -67,15 +77,15 @@ export async function POST(req: NextRequest) {
     if (town && !townData) {
         return new Response(JSON.stringify({error: 'Town not found'}), {
             status: 404,
-            headers: {'Content-Type': 'application/json'}
+            headers: responseHeaders
         })
     }
 
     if (townData) {
-        return new Response(JSON.stringify(townData), {headers: {'Content-Type': 'application/json'}})
+        return new Response(JSON.stringify(townData), {headers: responseHeaders})
     } else if (districtData) {
-        return new Response(JSON.stringify(districtData), {headers: {'Content-Type': 'application/json'}})
+        return new Response(JSON.stringify(districtData), {headers: responseHeaders})
     } else if (provinceData) {
-        return new Response(JSON.stringify(provinceData), {headers: {'Content-Type': 'application/json'}})
+        return new Response(JSON.stringify(provinceData), {headers: responseHeaders})
     }
 }
