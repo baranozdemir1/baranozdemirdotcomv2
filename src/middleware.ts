@@ -13,7 +13,7 @@ const corsOptions: {
     credentials: boolean;
 } = {
     allowedMethods: (process.env?.ALLOWED_METHODS || "GET, HEAD, PUT, PATCH, POST, DELETE, OPTIONS").split(","),
-    allowedOrigins: (process.env?.ALLOWED_ORIGIN || "https://flower.weblimes.com,http://localhost:3000").split(","),
+    allowedOrigins: (process.env?.ALLOWED_ORIGIN || "https://flower.weblimes.com,https://weblimes.com").split(","),
     allowedHeaders: (process.env?.ALLOWED_HEADERS || "Content-Type, Authorization").split(","),
     exposedHeaders: (process.env?.EXPOSED_HEADERS || "").split(","),
     maxAge: 86400, // 60 * 60 * 24 * 30, // 30 days
